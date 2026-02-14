@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Trash2, Mail, MailOpen } from "lucide-react";
+import { Mail, MailOpen } from "lucide-react";
 import { getData, setData, defaultMessages, KEYS, type Message } from "@/data/mock-data";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 
 const AdminMessages = () => {
   const [items, setItems] = useState(() => getData<Message>(KEYS.messages, defaultMessages));
@@ -29,7 +30,7 @@ const AdminMessages = () => {
                     <button onClick={() => toggleRead(m.id)} className="p-1.5 hover:text-primary transition-colors">
                       {m.read ? <Mail className="w-4 h-4" /> : <MailOpen className="w-4 h-4" />}
                     </button>
-                    <button onClick={() => save(items.filter((i) => i.id !== m.id))} className="p-1.5 hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <DeleteConfirmDialog onConfirm={() => save(items.filter((i) => i.id !== m.id))} />
                   </div>
                 </TableCell>
               </TableRow>

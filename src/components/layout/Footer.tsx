@@ -8,7 +8,7 @@ const Footer = () => (
         <div>
           <Link to="/" className="flex items-center gap-2 text-primary font-display font-bold text-xl mb-3">
             <Terminal className="w-5 h-5" />
-            <span>Alex Dubois</span>
+            <span>Nyankoye Daniel Félémou</span>
           </Link>
           <p className="text-sm text-muted-foreground">
             Développeur Full Stack passionné par les technologies web modernes.
@@ -30,7 +30,7 @@ const Footer = () => (
             {[
               { icon: Github, href: "#" },
               { icon: Linkedin, href: "#" },
-              { icon: Mail, href: "mailto:alex@dubois.dev" },
+              { icon: Mail, href: "mailto:daniel@felemou.dev" },
             ].map(({ icon: Icon, href }, i) => (
               <a key={i} href={href} className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors">
                 <Icon className="w-5 h-5" />
@@ -40,7 +40,7 @@ const Footer = () => (
         </div>
       </div>
       <div className="mt-8 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Alex Dubois. Tous droits réservés.
+        © {new Date().getFullYear()} Nyankoye Daniel Félémou. Tous droits réservés.
       </div>
     </div>
   </footer>
