@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, .dark {
     --background: 220 25% 4%;
     --foreground: 210 20% 93%;
 
@@ -58,6 +58,61 @@
     --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.3);
   }
 
+  .light {
+    --background: 210 20% 98%;
+    --foreground: 220 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 10%;
+
+    --primary: 190 95% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 15% 93%;
+    --secondary-foreground: 220 20% 30%;
+
+    --muted: 210 15% 93%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 35 95% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 80% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 15% 87%;
+    --input: 210 15% 90%;
+    --ring: 190 95% 35%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 20% 30%;
+    --sidebar-primary: 190 95% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 93%;
+    --sidebar-accent-foreground: 220 25% 10%;
+    --sidebar-border: 210 15% 87%;
+    --sidebar-ring: 190 95% 35%;
+
+    --gradient-brand: linear-gradient(135deg, hsl(190 95% 35%), hsl(220 85% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(35 95% 50%), hsl(15 85% 45%));
+    --gradient-hero: radial-gradient(ellipse at 30% 0%, hsl(190 95% 35% / 0.08) 0%, transparent 60%),
+                     radial-gradient(ellipse at 80% 50%, hsl(220 85% 50% / 0.06) 0%, transparent 50%);
+    --gradient-project-1: linear-gradient(135deg, hsl(190 95% 35%), hsl(220 85% 50%));
+    --gradient-project-2: linear-gradient(135deg, hsl(35 95% 50%), hsl(15 85% 45%));
+    --gradient-project-3: linear-gradient(135deg, hsl(280 75% 50%), hsl(320 80% 45%));
+    --gradient-project-4: linear-gradient(135deg, hsl(150 80% 35%), hsl(190 90% 35%));
+    --gradient-project-5: linear-gradient(135deg, hsl(45 95% 45%), hsl(35 90% 55%));
+    --gradient-project-6: linear-gradient(135deg, hsl(0 80% 50%), hsl(330 75% 45%));
+
+    --shadow-glow: 0 0 30px hsl(190 95% 35% / 0.1);
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.08);
+  }
+
   * {
     @apply border-border;
   }
@@ -97,6 +152,20 @@
 @layer components {
   .glass {
     @apply bg-card/60 backdrop-blur-xl border border-border/50;
+  }
+
+  .light .glass {
+    @apply bg-card/80 backdrop-blur-xl border border-border/60 shadow-sm;
+  }
+
+  .light ::-webkit-scrollbar-track {
+    background: hsl(210 20% 98%);
+  }
+  .light ::-webkit-scrollbar-thumb {
+    background: hsl(210 15% 80%);
+  }
+  .light ::-webkit-scrollbar-thumb:hover {
+    background: hsl(210 15% 70%);
   }
 
   .gradient-text {

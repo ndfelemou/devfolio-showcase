@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit } from "lucide-react";
 import { getData, setData, defaultBlogPosts, KEYS, generateId, type BlogPost } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 
 const AdminBlog = () => {
   const [items, setItems] = useState(() => getData<BlogPost>(KEYS.blog, defaultBlogPosts));
@@ -39,7 +40,7 @@ const AdminBlog = () => {
                 <TableCell>
                   <div className="flex gap-1">
                     <button onClick={() => { setForm(p); setEditId(p.id); setOpen(true); }} className="p-1.5 hover:text-primary transition-colors"><Edit className="w-4 h-4" /></button>
-                    <button onClick={() => save(items.filter((i) => i.id !== p.id))} className="p-1.5 hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                    <DeleteConfirmDialog onConfirm={() => save(items.filter((i) => i.id !== p.id))} />
                   </div>
                 </TableCell>
               </TableRow>

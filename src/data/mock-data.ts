@@ -67,14 +67,14 @@ export interface Profile {
 export const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export const defaultProfile: Profile = {
-  name: "Alex Dubois",
+  name: "Nyankoye Daniel Félémou",
   title: "Développeur Full Stack",
   bio: "Passionné par le développement web moderne, je crée des applications performantes et élégantes. Avec 5 ans d'expérience, je maîtrise React, Node.js et les architectures cloud.",
-  email: "alex@dubois.dev",
-  phone: "+33 6 12 34 56 78",
-  location: "Paris, France",
-  github: "https://github.com/alexdubois",
-  linkedin: "https://linkedin.com/in/alexdubois",
+  email: "daniel@felemou.dev",
+  phone: "+224 6 12 34 56 78",
+  location: "Conakry, Guinée",
+  github: "https://github.com/danielfelemou",
+  linkedin: "https://linkedin.com/in/danielfelemou",
 };
 
 export const defaultProjects: Project[] = [
