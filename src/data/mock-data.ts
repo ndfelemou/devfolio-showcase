@@ -159,7 +159,7 @@ export const defaultProjects: Project[] = [
   },
 
   {
-    id: "11", title: "Application de gestion de bibliothèque", description: "Application React TS avec backend NodeJS et MySQL pour gérer livres, emprunts et utilisateurs.", technologies: ["React", "TypeScript", "Node.js", "MySQL"], image: "", githubUrl: "", liveUrl: "", category: "fullstack", gradientIndex: 11, origin: "perso",
+    id: "11", title: "Application de gestion de bibliothèque", description: "Application React TS avec backend NodeJS et MySQL pour gérer livres, emprunts et utilisateurs.", technologies: ["React", "TypeScript", "Node.js", "MySQL"], image: "", githubUrl: "", liveUrl: "https://frontend-biblio-plus.vercel.app/", category: "fullstack", gradientIndex: 11, origin: "perso",
   },
 
   {
