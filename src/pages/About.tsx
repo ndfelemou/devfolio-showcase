@@ -1,12 +1,16 @@
-import { motion } from "framer-motion";
-import { MapPin, Mail, Phone, Github, Linkedin, Download } from "lucide-react";
-import { getProfile } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
+import { getProfile } from "@/data/mock-data";
+import { motion } from "framer-motion";
+import { Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { Link } from 'react-router-dom';
+import cv from "../assets/pdf/TestCV.pdf";
+import { downloadFiles } from '../utils/downloadFile';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
 const About = () => {
   const profile = getProfile();
+
 
   return (
     <section className="section-padding">
@@ -22,7 +26,11 @@ const About = () => {
               <p>{profile.bio}</p>
               <p>Je suis constamment à la recherche de nouveaux défis techniques et j'aime travailler sur des projets qui ont un impact réel. Mon approche combine rigueur technique et sensibilité design.</p>
               <p>En dehors du code, je contribue à des projets open source, j'écris des articles techniques et je participe à des meetups de développeurs.</p>
-              <Button variant="outline" className="gap-2 mt-4">
+              <Button variant="outline" className="gap-2 mt-4" onClick={() => {
+                if (confirm("Voulez-vous télécharger mon CV ?")) {
+                  downloadFiles(cv, "CV_Nyankoye_Daniel_FELEMOU.pdf");
+                }
+              }}>
                 <Download className="w-4 h-4" /> Télécharger mon CV
               </Button>
             </motion.div>
@@ -33,12 +41,16 @@ const About = () => {
                 { icon: MapPin, label: profile.location },
                 { icon: Mail, label: profile.email },
                 { icon: Phone, label: profile.phone },
-                { icon: Github, label: "GitHub" },
-                { icon: Linkedin, label: "LinkedIn" },
-              ].map(({ icon: Icon, label }, i) => (
+                { icon: Github, label: "GitHub", lien: "https://github.com/ndffelemou" },
+                { icon: Linkedin, label: "LinkedIn", lien: "https://github.com/ndffelemou" },
+              ].map(({ icon: Icon, label, lien }, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm">
                   <Icon className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-muted-foreground">{label}</span>
+                  <span className="text-muted-foreground">
+                    {
+                      label === "GitHub" || label === "LinkedIn" ? <Link to={lien}>{label}</Link> : <span>{label}</span>
+                    }
+                  </span>
                 </div>
               ))}
             </motion.div>

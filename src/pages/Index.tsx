@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, Github, Linkedin, Mail, Code, Database, Globe } from "lucide-react";
-import { getData, defaultProjects, defaultSkills, getProfile, KEYS, type Project } from "@/data/mock-data";
 import { Button } from "@/components/ui/button";
+import { defaultProjects, defaultSkills, getData, getProfile, KEYS, type Project } from "@/data/mock-data";
+import { motion } from "framer-motion";
+import { ArrowRight, Code, Database, Github, Globe, Linkedin, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
@@ -23,6 +23,15 @@ const Index = () => {
   const profile = getProfile();
   const projects = getData<Project>(KEYS.projects, defaultProjects).slice(0, 3);
   const skills = getData(KEYS.skills, defaultSkills);
+
+  // Retourner la bonne salutation au bon moment.
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    const minute = new Date().getMinutes();
+    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    const greeting = hour >= 12 ? "Bonsoir" : "Bonjour";
+    return `// ${greeting}, je suis`;
+  };
 
   return (
     <>
@@ -58,7 +67,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
           <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } } }} className="max-w-3xl">
             <motion.p variants={fadeUp} className="text-primary font-mono text-sm mb-4">
-              {"// Bonjour, je suis"}
+              {getGreeting()}
             </motion.p>
             <motion.h1 variants={fadeUp} className="text-5xl sm:text-7xl font-display font-bold mb-4">
               {profile.name}
@@ -111,7 +120,7 @@ const Index = () => {
           {[
             { icon: Code, label: "Projets", value: defaultProjects.length + "+" },
             { icon: Database, label: "Technologies", value: skills.length + "+" },
-            { icon: Globe, label: "Années", value: "5+" },
+            { icon: Globe, label: "Années", value: "1+" },
             { icon: Mail, label: "Clients", value: "20+" },
           ].map(({ icon: Icon, label, value }, i) => (
             <motion.div

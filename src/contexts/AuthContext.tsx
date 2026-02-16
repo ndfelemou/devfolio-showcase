@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const login = useCallback((email: string, password: string) => {
-    if (email === "admin@portfolio.dev" && password === "admin123") {
+    if (email === "admin.ndfelemou@portfolio.dev" && password === "admin123") {
       localStorage.setItem("portfolio_auth_token", "jwt-mock-token");
       setIsAuthenticated(true);
       return true;

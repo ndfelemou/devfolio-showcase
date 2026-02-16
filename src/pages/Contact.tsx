@@ -1,61 +1,156 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Send, MapPin, Mail, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { getProfile } from "@/data/mock-data";
 import { useToast } from "@/hooks/use-toast";
-import { getData, defaultMessages, KEYS, setData, generateId, getProfile, type Message } from "@/data/mock-data";
+import emailjs from "@emailjs/browser";
+import { motion } from "framer-motion";
+import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { useState } from "react";
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
 const Contact = () => {
   const profile = getProfile();
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
   const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
-      toast({ title: "Erreur", description: "Veuillez remplir tous les champs obligatoires.", variant: "destructive" });
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive",
+      });
       return;
     }
+
     setSending(true);
-    setTimeout(() => {
-      const messages = getData<Message>(KEYS.messages, defaultMessages);
-      const newMessage: Message = { id: generateId(), ...form, date: new Date().toISOString(), read: false };
-      setData(KEYS.messages, [...messages, newMessage]);
-      setForm({ name: "", email: "", subject: "", message: "" });
-      setSending(false);
-      toast({ title: "Message envoyé !", description: "Je vous répondrai dans les plus brefs délais." });
-    }, 800);
+
+    // Implementation de la fonctionnalites de dev
+    emailjs
+      .sendForm(
+        "devFolio_showCase",
+        "template_v6icdwv",
+        e.currentTarget,
+        "gEbsB3iLkbOelP2RV",
+      )
+      .then(
+        () => {
+          toast({
+            title: "Message envoyé ✅",
+            description: "Je vous répondrai dans les plus brefs délais.",
+          });
+          setForm({ name: "", email: "", subject: "", message: "" });
+          setSending(false);
+        },
+        (error) => {
+          console.error(error);
+          toast({
+            title: "Erreur ❌",
+            description: "Impossible d'envoyer le message.",
+          });
+          setSending(false);
+        },
+      );
   };
 
   return (
     <section className="section-padding">
       <div className="max-w-5xl mx-auto">
-        <motion.p initial="hidden" animate="visible" variants={fadeUp} className="text-primary font-mono text-sm mb-2">{"// Contact"}</motion.p>
-        <motion.h1 initial="hidden" animate="visible" variants={fadeUp} className="text-4xl sm:text-5xl font-display font-bold mb-12">
+        {" "}
+        <motion.p
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          className="text-primary font-mono text-sm mb-2"
+        >
+          {" "}
+          {"// Contact"}{" "}
+        </motion.p>
+        <motion.h1
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          className="text-4xl sm:text-5xl font-display font-bold mb-12"
+        >
           Me <span className="gradient-text">contacter</span>
-        </motion.h1>
-
+        </motion.h1>{" "}
         <div className="grid md:grid-cols-5 gap-10">
-          <motion.form onSubmit={handleSubmit} initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-            className="md:col-span-3 space-y-4">
-            <motion.div variants={fadeUp}><Input placeholder="Votre nom *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></motion.div>
-            <motion.div variants={fadeUp}><Input type="email" placeholder="Votre email *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></motion.div>
-            <motion.div variants={fadeUp}><Input placeholder="Sujet" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} /></motion.div>
-            <motion.div variants={fadeUp}><Textarea placeholder="Votre message *" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} /></motion.div>
+          <motion.form
+            onSubmit={handleSubmit}
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+            className="md:col-span-3 space-y-4"
+          >
             <motion.div variants={fadeUp}>
-              <Button type="submit" disabled={sending} className="gap-2 w-full sm:w-auto">
-                <Send className="w-4 h-4" /> {sending ? "Envoi..." : "Envoyer"}
-              </Button>
+              <Input
+                name="name"
+                placeholder="Votre nom *"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
             </motion.div>
-          </motion.form>
-
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} className="md:col-span-2 glass rounded-xl p-6 space-y-5 h-fit">
-            <h3 className="font-display font-semibold text-lg">Coordonnées</h3>
+            <motion.div variants={fadeUp}>
+              <Input
+                type="email"
+                name="email"
+                placeholder="Votre email *"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />{" "}
+            </motion.div>{" "}
+            <motion.div variants={fadeUp}>
+              {" "}
+              <Input
+                name="subject"
+                placeholder="Sujet"
+                value={form.subject}
+                onChange={(e) => setForm({ ...form, subject: e.target.value })}
+              />{" "}
+            </motion.div>{" "}
+            <motion.div variants={fadeUp}>
+              {" "}
+              <Textarea
+                name="message"
+                placeholder="Votre message *"
+                rows={5}
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+              />{" "}
+            </motion.div>{" "}
+            <motion.div variants={fadeUp}>
+              {" "}
+              <Button
+                type="submit"
+                disabled={sending}
+                className="gap-2 w-full sm:w-auto"
+              >
+                {" "}
+                <Send className="w-4 h-4" />{" "}
+                {sending ? "Envoi..." : "Envoyer"}{" "}
+              </Button>{" "}
+            </motion.div>{" "}
+          </motion.form>{" "}
+          {/* Bloc coordonnées (inchangé) */}{" "}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="md:col-span-2 glass rounded-xl p-6 space-y-5 h-fit"
+          >
+            {" "}
+            <h3 className="font-display font-semibold text-lg">
+              Coordonnées
+            </h3>{" "}
             {[
               { icon: MapPin, text: profile.location },
               { icon: Mail, text: profile.email },
@@ -66,9 +161,9 @@ const Contact = () => {
                 <span>{text}</span>
               </div>
             ))}
-          </motion.div>
-        </div>
-      </div>
+          </motion.div>{" "}
+        </div>{" "}
+      </div>{" "}
     </section>
   );
 };
