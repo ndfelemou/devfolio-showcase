@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const login = useCallback((email: string, password: string) => {
-    if (email === "admin.ndfelemou@portfolio.dev" && password === "admin123") {
+    if (email === "admin.ndfelemou@portfolio.dev" && password === "admin.ndf@123") {
       localStorage.setItem("portfolio_auth_token", "jwt-mock-token");
       setIsAuthenticated(true);
       return true;

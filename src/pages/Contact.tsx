@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getProfile } from "@/data/mock-data";
+import { generateId, getProfile } from "@/data/mock-data";
 import { useToast } from "@/hooks/use-toast";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import { useState } from "react";
+import { defaultMessages, Message } from '../data/messages';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
@@ -44,12 +45,36 @@ const Contact = () => {
       )
       .then(
         () => {
-          toast({
-            title: "Message envoyé ✅",
-            description: "Je vous répondrai dans les plus brefs délais.",
-          });
-          setForm({ name: "", email: "", subject: "", message: "" });
-          setSending(false);
+
+          try {
+            // Implementation et Sauvegarde local
+            const newMessage: Message = {
+              id: generateId(),
+              ...form,
+              date: new Date().toISOString(),
+              read: false
+            }
+
+            defaultMessages.push(newMessage);
+            console.log('Your message sended : ', newMessage);
+
+            toast({
+              title: "Message envoyé ✅",
+              description: "Je vous répondrai dans les plus brefs délais.",
+            });
+            setForm({ name: "", email: "", subject: "", message: "" });
+            setSending(false);
+          } catch (error) {
+            console.error(error);
+            toast({
+              title: "Erreur ❌",
+              description: "Impossible d'envoyer le message.",
+            });
+            setSending(false);
+          }
+
+
+
         },
         (error) => {
           console.error(error);

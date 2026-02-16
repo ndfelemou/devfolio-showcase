@@ -1,10 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { LogIn, Terminal } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { Terminal, LogIn } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
 const Login = () => {
   const { login } = useAuth();
@@ -18,7 +18,8 @@ const Login = () => {
     if (login(email, password)) {
       navigate("/admin/dashboard");
     } else {
-      toast({ title: "Erreur", description: "Identifiants incorrects. Essayez admin@portfolio.dev / admin123", variant: "destructive" });
+      toast({ title: "Erreur", description: "Identifiants incorrects. ", variant: "destructive" });
+      // Essayez admin@portfolio.dev / admin123
     }
   };
 
@@ -34,7 +35,7 @@ const Login = () => {
           <Input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} />
           <Button type="submit" className="w-full gap-2"><LogIn className="w-4 h-4" /> Se connecter</Button>
         </form>
-        <p className="text-xs text-muted-foreground text-center mt-4">admin@portfolio.dev / admin123</p>
+        {/* <p className="text-xs text-muted-foreground text-center mt-4">admin@portfolio.dev / admin123</p> */}
       </div>
     </div>
   );
