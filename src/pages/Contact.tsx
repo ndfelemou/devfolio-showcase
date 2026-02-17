@@ -6,8 +6,9 @@ import { useToast } from "@/hooks/use-toast";
 import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
-import { useState } from "react";
-import { defaultMessages, Message } from '../data/messages';
+import { useEffect, useState } from "react";
+import { defaultMessages, Message } from '../data/mock-data';
+import Page from './dev/Page';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };
 
@@ -21,6 +22,18 @@ const Contact = () => {
     message: "",
   });
   const [sending, setSending] = useState(false);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const fetchmessages = async () => {
+      const res = await fetch("../api/messages.ts");
+      const data = await res.json();
+      console.log("res api messages : ", data)
+      setMessages(data)
+    }
+
+    fetchmessages();
+  }, [])
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -188,7 +201,9 @@ const Contact = () => {
             ))}
           </motion.div>{" "}
         </div>{" "}
-      </div>{" "}
+      </div>
+
+      {/* <Page /> */}
     </section>
   );
 };
