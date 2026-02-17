@@ -1,9 +1,8 @@
-import { NavLink } from "@/components/NavLink";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Menu, Moon, Sun, Terminal, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const links = [
   { to: "/", label: "Accueil" },
@@ -27,45 +26,30 @@ const Navbar = () => {
   const [parcoursOpen, setParcoursOpen] = useState(false);
   const { pathname } = useLocation();
   const { theme, toggleTheme } = useTheme();
-  const parcoursRef = useRef<HTMLDivElement>(null);
-
-  // Fermer le sous-menu si clic en dehors
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (parcoursRef.current && !parcoursRef.current.contains(event.target as Node)) {
-        setParcoursOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <NavLink
+          <Link
             to="/"
             className="flex items-center gap-2 text-primary font-display font-bold text-xl"
-            activeClassName="text-primary"
           >
             <Terminal className="w-5 h-5" />
             <span>NDF</span>
-          </NavLink>
+          </Link>
 
           {/* Desktop menu */}
           <div className="hidden md:flex items-center gap-1">
             {links.map((l) =>
               l.children ? (
-                <div key={l.label} className="relative" ref={parcoursRef}>
+                <div key={l.label} className="relative">
                   <button
                     onClick={() => setParcoursOpen(!parcoursOpen)}
                     className={`px-3 py-2 rounded-md text-sm font-medium flex items-center gap-1 transition-colors ${parcoursOpen
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                       }`}
                   >
                     {l.label}
@@ -80,29 +64,33 @@ const Navbar = () => {
                         className="absolute left-0 mt-2 w-40 glass rounded-lg shadow-lg p-2 space-y-1"
                       >
                         {l.children.map((child) => (
-                          <NavLink
+                          <Link
                             key={child.to}
                             to={child.to}
-                            onClick={() => setParcoursOpen(false)} // ✅ ferme au clic
-                            className="block px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                            activeClassName="text-primary bg-primary/10"
+                            onClick={() => setParcoursOpen(false)}
+                            className={`block px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === child.to
+                              ? "text-primary bg-primary/10"
+                              : "text-muted-foreground hover:text-foreground"
+                              }`}
                           >
                             {child.label}
-                          </NavLink>
+                          </Link>
                         ))}
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
               ) : (
-                <NavLink
+                <Link
                   key={l.to}
                   to={l.to}
-                  className="px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  activeClassName="text-primary bg-primary/10"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${pathname === l.to
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
                 >
                   {l.label}
-                </NavLink>
+                </Link>
               )
             )}
             {/* Theme toggle */}
@@ -134,6 +122,66 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile menu avec sous-menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden glass border-t border-border"
+          >
+            <div className="px-4 py-3 space-y-1">
+              {links.map((l) =>
+                l.children ? (
+                  <div key={l.label}>
+                    <button
+                      onClick={() => setParcoursOpen(!parcoursOpen)}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium"
+                    >
+                      {l.label}
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                    {parcoursOpen && (
+                      <div className="pl-4 space-y-1">
+                        {l.children.map((child) => (
+                          <Link
+                            key={child.to}
+                            to={child.to}
+                            onClick={() => {
+                              setParcoursOpen(false);
+                              setMobileOpen(false);
+                            }}
+                            className={`block px-3 py-2 rounded-md text-sm font-medium ${pathname === child.to
+                              ? "text-primary bg-primary/10"
+                              : "text-muted-foreground hover:text-foreground"
+                              }`}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={`block px-3 py-2 rounded-md text-sm font-medium ${pathname === l.to
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
+                  >
+                    {l.label}
+                  </Link>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
