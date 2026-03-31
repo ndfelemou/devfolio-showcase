@@ -3,6 +3,7 @@ import { defaultProjects, defaultSkills, getData, getProfile, KEYS, type Project
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Database, Github, Globe, Linkedin, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import profilePic from "@/assets/imgs/3.jpeg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40, filter: "blur(4px)" },
@@ -65,52 +66,96 @@ const Index = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-          <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } } }} className="max-w-3xl">
-            <motion.p variants={fadeUp} className="text-primary font-mono text-sm mb-4">
-              {getGreeting()}
-            </motion.p>
-            <motion.h1 variants={fadeUp} className="text-5xl sm:text-7xl font-display font-bold mb-4">
-              {profile.name}
-              <motion.span
-                className="gradient-text inline-block"
-                animate={{ rotate: [0, 5, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >.</motion.span>
-            </motion.h1>
-            <motion.p variants={fadeUp} className="text-xl sm:text-2xl text-muted-foreground font-display mb-2">
-              {profile.title}
-            </motion.p>
-            <motion.p variants={fadeUp} className="text-muted-foreground max-w-xl mb-8 leading-relaxed">
-              {profile.bio}
-            </motion.p>
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-              <Link to="/projects">
-                <Button size="lg" className="gap-2 group">
-                  Voir mes projets <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link to="/contact">
-                <Button variant="outline" size="lg">Me contacter</Button>
-              </Link>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Column 1: Text Content */}
+            <motion.div 
+              initial="hidden" 
+              animate="visible" 
+              variants={{ visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } } }} 
+              className="max-w-2xl"
+            >
+              <motion.p variants={fadeUp} className="text-primary font-mono text-sm mb-4">
+                {getGreeting()}
+              </motion.p>
+              <motion.h1 variants={fadeUp} className="text-5xl sm:text-7xl font-display font-bold mb-4">
+                {profile.name}
+                <motion.span
+                  className="gradient-text inline-block"
+                  animate={{ rotate: [0, 5, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >.</motion.span>
+              </motion.h1>
+              <motion.p variants={fadeUp} className="text-xl sm:text-2xl text-muted-foreground font-display mb-2">
+                {profile.title}
+              </motion.p>
+              <motion.p variants={fadeUp} className="text-muted-foreground max-w-xl mb-8 leading-relaxed">
+                {profile.bio}
+              </motion.p>
+              <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+                <Link to="/projects">
+                  <Button size="lg" className="gap-2 group">
+                    Voir mes projets <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <Link to="/contact">
+                  <Button variant="outline" size="lg">Me contacter</Button>
+                </Link>
+              </motion.div>
+              <motion.div variants={fadeUp} className="flex gap-3 mt-8">
+                {[
+                  { Icon: Github, href: profile.github },
+                  { Icon: Linkedin, href: profile.linkedin },
+                  { Icon: Mail, href: `mailto:${profile.email}` },
+                ].map(({ Icon, href }, i) => (
+                  <motion.a
+                    key={i}
+                    href={href}
+                    className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Icon className="w-5 h-5" />
+                  </motion.a>
+                ))}
+              </motion.div>
             </motion.div>
-            <motion.div variants={fadeUp} className="flex gap-3 mt-8">
-              {[
-                { Icon: Github, href: profile.github },
-                { Icon: Linkedin, href: profile.linkedin },
-                { Icon: Mail, href: `mailto:${profile.email}` },
-              ].map(({ Icon, href }, i) => (
-                <motion.a
-                  key={i}
-                  href={href}
-                  className="p-2 rounded-lg bg-secondary text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                  whileHover={{ scale: 1.15, rotate: 5 }}
-                  whileTap={{ scale: 0.95 }}
+
+            {/* Column 2: Profile Image */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, x: 50 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+              className="relative flex justify-center lg:justify-end"
+            >
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px]">
+                {/* Background decorative elements */}
+                <div className="absolute inset-0 bg-primary/10 rounded-3xl rotate-6 -z-10 animate-pulse" />
+                <div className="absolute inset-0 border-2 border-primary/20 rounded-3xl -rotate-3 -z-10" />
+                
+                {/* Main Image Container */}
+                <div className="w-full h-full rounded-3xl overflow-hidden border-2 border-primary shadow-2xl relative z-10 group">
+                  <img 
+                    src={profilePic} 
+                    alt={profile.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </div>
+
+                {/* Floating badge or element */}
+                <motion.div 
+                  className="absolute -bottom-6 -left-6 glass p-4 rounded-2xl shadow-xl z-20 hidden sm:block"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <Icon className="w-5 h-5" />
-                </motion.a>
-              ))}
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">Disponible pour de nouveaux projets</span>
+                  </div>
+                </motion.div>
+              </div>
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

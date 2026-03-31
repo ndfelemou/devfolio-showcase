@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, Terminal } from "lucide-react";
+import { LogIn, Terminal, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,14 +12,15 @@ const Login = () => {
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (login(email, password)) {
+    const success = await login(email, password);
+    if (success) {
       navigate("/admin/dashboard");
     } else {
-      toast({ title: "Erreur", description: "Identifiants incorrects. ", variant: "destructive" });
-      // Essayez admin@portfolio.dev / admin123
+      toast({ title: "Erreur", description: "Identifiants incorrects ou problème de connexion.", variant: "destructive" });
     }
   };
 
@@ -32,7 +33,22 @@ const Login = () => {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <Input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="relative">
+            <Input 
+              type={showPassword ? "text" : "password"} 
+              placeholder="Mot de passe" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
           <Button type="submit" className="w-full gap-2"><LogIn className="w-4 h-4" /> Se connecter</Button>
         </form>
         {/* <p className="text-xs text-muted-foreground text-center mt-4">admin@portfolio.dev / admin123</p> */}

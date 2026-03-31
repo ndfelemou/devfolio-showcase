@@ -3,7 +3,7 @@ import { getProfile } from "@/data/mock-data";
 import { motion } from "framer-motion";
 import { Download, Github, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from 'react-router-dom';
-import cv from "../assets/pdf/TestCV.pdf";
+import cv from "../assets/pdf/2026_v2_CV_Nyankoye_Daniel_FELEMOU.pdf";
 import { downloadFiles } from '../utils/downloadFile';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } };

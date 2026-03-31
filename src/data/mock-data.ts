@@ -177,31 +177,36 @@ export const defaultProjects: Project[] = [
 
 
 export const defaultSkills: Skill[] = [
-  // --- Frontend ---
+  // --- Langages de programmation ---
+  { id: "19", name: "JavaScript", level: 85, category: "Langages de programmation" },
+  { id: "2", name: "TypeScript", level: 75, category: "Langages de programmation" },
+  { id: "20", name: "PHP", level: 90, category: "Langages de programmation" },
+  { id: "7", name: "Python", level: 60, category: "Langages de programmation" },
+
+  // --- Frontend (Frameworks & Librairies) ---
   { id: "1", name: "React", level: 70, category: "Frontend" },
-  { id: "2", name: "TypeScript", level: 50, category: "Frontend" },
-  { id: "3", name: "Tailwind CSS", level: 80, category: "Frontend" },
+  { id: "21", name: "Next.js", level: 45, category: "Frontend" },
   { id: "4", name: "Angular", level: 75, category: "Frontend" },
+  { id: "3", name: "Tailwind CSS", level: 80, category: "Frontend" },
   { id: "16", name: "Bootstrap", level: 85, category: "Frontend" },
 
-  // --- Backend ---
+  // --- Backend (Frameworks & Runtimes) ---
+  { id: "8", name: "Laravel", level: 95, category: "Backend" },
   { id: "5", name: "Node.js", level: 70, category: "Backend" },
   { id: "6", name: "Express", level: 85, category: "Backend" },
-  { id: "7", name: "Python", level: 55, category: "Backend" },
-  { id: "8", name: "Laravel", level: 95, category: "Backend" },
   { id: "17", name: "FastAPI", level: 40, category: "Backend" },
 
   // --- Database ---
-  { id: "9", name: "PostgreSQL", level: 38, category: "Database" },
   { id: "10", name: "MySQL", level: 90, category: "Database" },
-  { id: "11", name: "MongoDB", level: 80, category: "Database" },
   { id: "18", name: "SQL Server", level: 90, category: "Database" },
+  { id: "11", name: "MongoDB", level: 80, category: "Database" },
+  { id: "9", name: "PostgreSQL", level: 38, category: "Database" },
 
-  // --- DevOps ---
-  { id: "12", name: "Docker", level: 42, category: "DevOps" },
-  { id: "13", name: "AWS", level: 35, category: "DevOps" },
+  // --- DevOps & Outils ---
   { id: "14", name: "Git & GitHub", level: 75, category: "DevOps" },
   { id: "15", name: "Git & GitLab", level: 45, category: "DevOps" },
+  { id: "12", name: "Docker", level: 42, category: "DevOps" },
+  { id: "13", name: "AWS", level: 35, category: "DevOps" },
 ];
 
 
