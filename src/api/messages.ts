@@ -1,27 +1,15 @@
-import { createClient } from "@supabase/supabase-js";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
-);
-
-
-// Fonction
+// API désactivée pour utiliser des données locales statiques
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
-    const { name, email, subject, message } = req.body;
-
-    const { data, error } = await supabase.from("messages").insert([{ name, email, subject, message }])
-
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(201).json({ success: true, data });
+    // Simulation d'envoi de message (sans enregistrement)
+    return res.status(201).json({ success: true, message: "Simulation réussie" });
   }
 
   if (req.method === "GET") {
-    const { data, error } = await supabase.from("messages").select("*");
-    if (error) return res.status(400).json({ error: error.message });
-    return res.status(200).json(data);
+    // Retourner une liste vide ou des données simulées
+    return res.status(200).json([]);
   }
 
   return res.status(405).json({ error: "Method not allowed" });
