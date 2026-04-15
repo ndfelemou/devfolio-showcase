@@ -1,8 +1,9 @@
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Menu, Moon, Sun, Terminal, X } from "lucide-react";
+import { ChevronDown, Menu, Moon, Sun, Terminal, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const links = [
   { to: "/", label: "Accueil" },
@@ -25,7 +26,15 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [parcoursOpen, setParcoursOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    setMobileOpen(false);
+    navigate("/");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
@@ -93,6 +102,28 @@ const Navbar = () => {
                 </Link>
               )
             )}
+
+            {/* Admin Links (Desktop) */}
+            {isAuthenticated && (
+              <>
+                <div className="w-px h-6 bg-border mx-2" />
+                <Link
+                  to="/admin/dashboard"
+                  className="px-3 py-2 rounded-md text-sm font-medium text-primary hover:bg-primary/10 transition-colors flex items-center gap-1"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Admin
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  title="Déconnexion"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
+            )}
+
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
@@ -177,6 +208,27 @@ const Navbar = () => {
                     {l.label}
                   </Link>
                 )
+              )}
+
+              {/* Admin Links (Mobile) */}
+              {isAuthenticated && (
+                <div className="pt-2 mt-2 border-t border-border space-y-1">
+                  <Link
+                    to="/admin/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Administration
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Déconnexion
+                  </button>
+                </div>
               )}
             </div>
           </motion.div>
