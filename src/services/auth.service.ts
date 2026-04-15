@@ -1,10 +1,14 @@
 export const authService = {
   // Connexion
-  async login(email: string, _password: string) {
-    // Mock login: always succeeds with any password
-    const user = { id: "1", email };
-    localStorage.setItem("portfolio_user", JSON.stringify(user));
-    return { user, session: { access_token: "mock-token" } };
+  async login(email: string, password: string) {
+    // Vérification des identifiants spécifiques
+    if (email === "ndfelemou@gmail.com" && password === "ndfelemou2026") {
+      const user = { id: "1", email };
+      localStorage.setItem("portfolio_user", JSON.stringify(user));
+      return { user, session: { access_token: "mock-token" } };
+    } else {
+      throw new Error("Identifiants invalides");
+    }
   },
 
   // Déconnexion
