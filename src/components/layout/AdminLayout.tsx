@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   BookOpen,
   Briefcase,
@@ -8,6 +9,8 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Moon,
+  Sun,
   Terminal,
   User,
   X,
@@ -29,6 +32,7 @@ const navItems = [
 
 const AdminLayout = () => {
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,7 +43,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 transform bg-card border-r border-border flex flex-col w-64 shrink-0 transition-transform duration-300 z-40
@@ -62,7 +66,7 @@ const AdminLayout = () => {
             <X className="w-6 h-6" />
           </button>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {navItems.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}
@@ -79,7 +83,14 @@ const AdminLayout = () => {
             </Link>
           ))}
         </nav>
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-border space-y-1">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors w-full"
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === "dark" ? "Mode Clair" : "Mode Sombre"}
+          </button>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors w-full"
@@ -91,9 +102,9 @@ const AdminLayout = () => {
       </aside>
 
       {/* Contenu principal */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Header avec bouton menu sur mobile */}
-        <header className="md:hidden p-4 border-b border-border flex items-center justify-between">
+        <header className="md:hidden p-4 border-b border-border flex items-center justify-between bg-card">
           <button
             className="text-muted-foreground hover:text-foreground"
             onClick={() => setSidebarOpen(true)}
@@ -101,9 +112,15 @@ const AdminLayout = () => {
             <Menu className="w-6 h-6" />
           </button>
           <span className="font-bold">Admin Panel</span>
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+          >
+            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
         </header>
 
-        <main className="flex-1 p-6 overflow-auto">
+        <main className="flex-1 p-6 overflow-auto bg-background">
           <Outlet />
         </main>
       </div>

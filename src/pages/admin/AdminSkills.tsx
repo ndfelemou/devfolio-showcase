@@ -5,6 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import DeleteConfirmDialog from "@/components/DeleteConfirmDialog";
 import { skillService } from "@/services/skill.service";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,6 +26,10 @@ const AdminSkills = () => {
   const [form, setForm] = useState<Partial<Skill>>({});
   const { user } = useAuth();
   const { toast } = useToast();
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   const loadSkills = async () => {
     try {
@@ -35,7 +47,18 @@ const AdminSkills = () => {
     loadSkills();
   }, []);
 
-  const openAdd = () => { setForm({ level: 50 }); setEditId(null); setOpen(true); };
+  // Pagination logic
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const openAdd = () => { setForm({ name: "", category: "Frontend", level: 50 }); setEditId(null); setOpen(true); };
   const openEdit = (s: Skill) => { setForm(s); setEditId(s.id); setOpen(true); };
 
   const handleSave = async () => {
@@ -52,8 +75,9 @@ const AdminSkills = () => {
         setItems(items.map((i) => (i.id === editId ? updated : i)));
         toast({ title: "Succès", description: "Compétence mise à jour." });
       } else {
-        const created = await skillService.create(skillData, user.id);
+        const created = await skillService.create(skillData);
         setItems([...items, created]);
+        setCurrentPage(Math.ceil((items.length + 1) / itemsPerPage)); // Aller à la dernière page pour voir la nouvelle compétence
         toast({ title: "Succès", description: "Compétence créée." });
       }
       setOpen(false);
@@ -65,7 +89,14 @@ const AdminSkills = () => {
   const handleDelete = async (id: string) => {
     try {
       await skillService.delete(id);
-      setItems(items.filter((i) => i.id !== id));
+      const newItems = items.filter((i) => i.id !== id);
+      setItems(newItems);
+      
+      const newTotalPages = Math.ceil(newItems.length / itemsPerPage);
+      if (currentPage > newTotalPages && newTotalPages > 0) {
+        setCurrentPage(newTotalPages);
+      }
+      
       toast({ title: "Succès", description: "Compétence supprimée." });
     } catch (error: any) {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
@@ -73,8 +104,8 @@ const AdminSkills = () => {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-display font-bold">Compétences</h1>
         <Button onClick={openAdd} size="sm" className="gap-1"><Plus className="w-4 h-4" /> Ajouter</Button>
       </div>
@@ -82,28 +113,67 @@ const AdminSkills = () => {
       {loading ? (
         <div className="flex justify-center p-12">Chargement...</div>
       ) : (
-        <div className="glass rounded-xl overflow-hidden">
-          <Table>
-            <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Catégorie</TableHead><TableHead>Niveau</TableHead><TableHead className="w-24">Actions</TableHead></TableRow></TableHeader>
-            <TableBody>
-              {items.map((s) => (
-                <TableRow key={s.id}>
-                  <TableCell className="font-medium">{s.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{s.category}</TableCell>
-                  <TableCell className="text-muted-foreground">{s.level}%</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <button onClick={() => openEdit(s)} className="p-1.5 hover:text-primary transition-colors"><Edit className="w-4 h-4" /></button>
-                      <DeleteConfirmDialog onConfirm={() => handleDelete(s.id)} />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {items.length === 0 && (
-                <TableRow><TableCell colSpan={4} className="text-center p-8 text-muted-foreground">Aucune compétence trouvée.</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <div className="space-y-4">
+          <div className="glass rounded-xl overflow-hidden">
+            <Table>
+              <TableHeader><TableRow><TableHead>Nom</TableHead><TableHead>Catégorie</TableHead><TableHead>Niveau</TableHead><TableHead className="w-24 text-right">Actions</TableHead></TableRow></TableHeader>
+              <TableBody>
+                {paginatedItems.map((s) => (
+                  <TableRow key={s.id}>
+                    <TableCell className="font-medium">{s.name}</TableCell>
+                    <TableCell className="text-muted-foreground">{s.category}</TableCell>
+                    <TableCell className="text-muted-foreground">{s.level}%</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        <button onClick={() => openEdit(s)} className="p-1.5 hover:text-primary transition-colors"><Edit className="w-4 h-4" /></button>
+                        <DeleteConfirmDialog onConfirm={() => handleDelete(s.id)} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {items.length === 0 && (
+                  <TableRow><TableCell colSpan={4} className="text-center p-8 text-muted-foreground">Aucune compétence trouvée.</TableCell></TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Affichage de {startIndex + 1} à {Math.min(startIndex + itemsPerPage, items.length)} sur {items.length} compétences
+              </p>
+              <Pagination className="w-auto mx-0">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {[...Array(totalPages)].map((_, i) => (
+                    <PaginationItem key={i + 1} className="hidden sm:inline-block">
+                      <PaginationLink 
+                        onClick={(e) => { e.preventDefault(); goToPage(i + 1); }}
+                        isActive={currentPage === i + 1}
+                        className="cursor-pointer"
+                      >
+                        {i + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={(e) => { e.preventDefault(); goToPage(currentPage + 1); }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       )}
 
