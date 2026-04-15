@@ -1,60 +1,41 @@
-import supabase from "@/utils/supabase";
-import { Project } from "@/data/mock-data";
+import { Project, getData, setData, KEYS, generateId, defaultProjects } from "@/data/mock-data";
 
 export const projectService = {
   // Récupérer tous les projets
   async getAll() {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .order("created_at", { ascending: false });
-    
-    if (error) throw error;
-    return data;
+    return getData<Project>(KEYS.projects, defaultProjects);
   },
 
   // Récupérer un projet par ID
   async getById(id: string) {
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("id", id)
-      .single();
-    
-    if (error) throw error;
-    return data;
+    const projects = getData<Project>(KEYS.projects, defaultProjects);
+    return projects.find(p => p.id === id);
   },
 
   // Ajouter un projet
-  async create(project: Omit<Project, "id">, profileId: string) {
-    const { data, error } = await supabase
-      .from("projects")
-      .insert([{ ...project, profile_id: profileId }])
-      .select();
-    
-    if (error) throw error;
-    return data[0];
+  async create(project: Omit<Project, "id">) {
+    const projects = getData<Project>(KEYS.projects, defaultProjects);
+    const newProject = { ...project, id: generateId() } as Project;
+    setData(KEYS.projects, [newProject, ...projects]);
+    return newProject;
   },
 
   // Mettre à jour un projet
   async update(id: string, updates: Partial<Project>) {
-    const { data, error } = await supabase
-      .from("projects")
-      .update(updates)
-      .eq("id", id)
-      .select();
+    const projects = getData<Project>(KEYS.projects, defaultProjects);
+    const index = projects.findIndex(p => p.id === id);
+    if (index === -1) throw new Error("Projet non trouvé");
     
-    if (error) throw error;
-    return data[0];
+    const updatedProject = { ...projects[index], ...updates };
+    projects[index] = updatedProject;
+    setData(KEYS.projects, projects);
+    return updatedProject;
   },
 
   // Supprimer un projet
   async delete(id: string) {
-    const { error } = await supabase
-      .from("projects")
-      .delete()
-      .eq("id", id);
-    
-    if (error) throw error;
+    const projects = getData<Project>(KEYS.projects, defaultProjects);
+    const filteredProjects = projects.filter(p => p.id !== id);
+    setData(KEYS.projects, filteredProjects);
   }
 };

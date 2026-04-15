@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import supabase from '../../utils/supabase'
+import { messageService } from '@/services/message.service'
 import { Message } from '../../data/mock-data'
 
 function Page() {
@@ -7,18 +7,13 @@ function Page() {
 
   useEffect(() => {
     async function getMessages() {
-      const { data, error } = await supabase.from('messages').select('*')
-
-      if (error) {
-        console.error("Erreur Supabase:", error.message)
-        return
+      try {
+        const data = await messageService.getAll()
+        setMessages(data)
+        console.log("messages:", data)
+      } catch (error: any) {
+        console.error("Erreur récupération messages:", error.message)
       }
-
-      if (data && data.length > 0) {
-        setMessages(data as Message[])
-      }
-
-      console.log("messages:", data)
     }
 
     getMessages()

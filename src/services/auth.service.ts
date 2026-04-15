@@ -1,26 +1,21 @@
-import supabase from "@/utils/supabase";
-
 export const authService = {
   // Connexion
-  async login(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) throw error;
-    return data;
+  async login(email: string, _password: string) {
+    // Mock login: always succeeds with any password
+    const user = { id: "1", email };
+    localStorage.setItem("portfolio_user", JSON.stringify(user));
+    return { user, session: { access_token: "mock-token" } };
   },
 
   // Déconnexion
   async logout() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    localStorage.removeItem("portfolio_user");
   },
   
   // Récupérer l'utilisateur actuel
   async getCurrentUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-    return user;
+    const user = localStorage.getItem("portfolio_user");
+    return user ? JSON.parse(user) : null;
   },
 
   // Vérifier si l'utilisateur est connecté

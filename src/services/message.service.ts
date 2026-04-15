@@ -1,27 +1,23 @@
-import supabase from "@/utils/supabase";
+import { Message, getData, setData, KEYS, defaultMessages } from "@/data/mock-data";
 
 export const messageService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from("messages")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) throw error;
-    return data;
+    return getData<Message>(KEYS.messages, defaultMessages);
   },
 
   async markAsRead(id: string) {
-    const { data, error } = await supabase
-      .from("messages")
-      .update({ is_read: true })
-      .eq("id", id)
-      .select();
-    if (error) throw error;
-    return data[0];
+    const messages = getData<Message>(KEYS.messages, defaultMessages);
+    const index = messages.findIndex(m => m.id === id);
+    if (index === -1) throw new Error("Message non trouvé");
+    
+    messages[index] = { ...messages[index], read: true };
+    setData(KEYS.messages, messages);
+    return messages[index];
   },
 
   async delete(id: string) {
-    const { error } = await supabase.from("messages").delete().eq("id", id);
-    if (error) throw error;
+    const messages = getData<Message>(KEYS.messages, defaultMessages);
+    const filtered = messages.filter(m => m.id !== id);
+    setData(KEYS.messages, filtered);
   }
 };

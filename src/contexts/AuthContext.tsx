@@ -1,11 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { authService } from "@/services/auth.service";
-import supabase from "@/utils/supabase";
-import { User } from "@supabase/supabase-js";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: User | null;
+  user: any | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -14,28 +12,21 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifier la session actuelle au chargement
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    // Vérifier l'utilisateur actuel au chargement
+    authService.getCurrentUser().then((user) => {
+      setUser(user);
       setLoading(false);
     });
-
-    // Écouter les changements d'état (login, logout, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     try {
-      await authService.login(email, password);
+      const { user } = await authService.login(email, password);
+      setUser(user);
       return true;
     } catch (error) {
       console.error("Login error:", error);
@@ -46,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(async () => {
     try {
       await authService.logout();
+      setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
     }

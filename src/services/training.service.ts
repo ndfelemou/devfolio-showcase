@@ -1,36 +1,31 @@
-import supabase from "@/utils/supabase";
-import { Training } from "@/data/mock-data";
+import { Training, getData, setData, KEYS, generateId, defaultTrainings } from "@/data/mock-data";
 
 export const trainingService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from("trainings")
-      .select("*");
-    if (error) throw error;
-    return data;
+    return getData<Training>(KEYS.trainings, defaultTrainings);
   },
 
-  async create(training: Omit<Training, "id">, profileId: string) {
-    const { data, error } = await supabase
-      .from("trainings")
-      .insert([{ ...training, profile_id: profileId }])
-      .select();
-    if (error) throw error;
-    return data[0];
+  async create(training: Omit<Training, "id">) {
+    const trainings = getData<Training>(KEYS.trainings, defaultTrainings);
+    const newTraining = { ...training, id: generateId() } as Training;
+    setData(KEYS.trainings, [...trainings, newTraining]);
+    return newTraining;
   },
 
   async update(id: string, updates: Partial<Training>) {
-    const { data, error } = await supabase
-      .from("trainings")
-      .update(updates)
-      .eq("id", id)
-      .select();
-    if (error) throw error;
-    return data[0];
+    const trainings = getData<Training>(KEYS.trainings, defaultTrainings);
+    const index = trainings.findIndex(t => t.id === id);
+    if (index === -1) throw new Error("Formation non trouvée");
+    
+    const updatedTraining = { ...trainings[index], ...updates };
+    trainings[index] = updatedTraining;
+    setData(KEYS.trainings, trainings);
+    return updatedTraining;
   },
 
   async delete(id: string) {
-    const { error } = await supabase.from("trainings").delete().eq("id", id);
-    if (error) throw error;
+    const trainings = getData<Training>(KEYS.trainings, defaultTrainings);
+    const filtered = trainings.filter(t => t.id !== id);
+    setData(KEYS.trainings, filtered);
   }
 };

@@ -1,36 +1,31 @@
-import supabase from "@/utils/supabase";
-import { Education } from "@/data/mock-data";
+import { Education, getData, setData, KEYS, generateId, defaultEducation } from "@/data/mock-data";
 
 export const educationService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from("education")
-      .select("*");
-    if (error) throw error;
-    return data;
+    return getData<Education>(KEYS.education, defaultEducation);
   },
 
-  async create(edu: Omit<Education, "id">, profileId: string) {
-    const { data, error } = await supabase
-      .from("education")
-      .insert([{ ...edu, profile_id: profileId }])
-      .select();
-    if (error) throw error;
-    return data[0];
+  async create(edu: Omit<Education, "id">) {
+    const educations = getData<Education>(KEYS.education, defaultEducation);
+    const newEdu = { ...edu, id: generateId() } as Education;
+    setData(KEYS.education, [...educations, newEdu]);
+    return newEdu;
   },
 
   async update(id: string, updates: Partial<Education>) {
-    const { data, error } = await supabase
-      .from("education")
-      .update(updates)
-      .eq("id", id)
-      .select();
-    if (error) throw error;
-    return data[0];
+    const educations = getData<Education>(KEYS.education, defaultEducation);
+    const index = educations.findIndex(e => e.id === id);
+    if (index === -1) throw new Error("Éducation non trouvée");
+    
+    const updatedEdu = { ...educations[index], ...updates };
+    educations[index] = updatedEdu;
+    setData(KEYS.education, educations);
+    return updatedEdu;
   },
 
   async delete(id: string) {
-    const { error } = await supabase.from("education").delete().eq("id", id);
-    if (error) throw error;
+    const educations = getData<Education>(KEYS.education, defaultEducation);
+    const filtered = educations.filter(e => e.id !== id);
+    setData(KEYS.education, filtered);
   }
 };
